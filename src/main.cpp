@@ -31,11 +31,11 @@ int main(int argc, char* argv[])
     double u_lid;
     std::map<int, int> index_map;
 
-    Nx = 100;
-    Ny = 100;
+    Nx = 20;
+    Ny = 10;
     Nd = 9;
 
-    max_timesteps = 4000;
+    max_timesteps = 500;
     dt = 1.0;
     dx = 1.0;
     tau = 0.8;
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
     double min_v_y = 1000.0;
     double max_v_x = 0.0;
     double min_v_x = 1000.0;
-    double max_velocity = 0.0;
+    double max_speed = 0.0;
     double max_vorticity = 0.0;
     do
     {
@@ -179,7 +179,11 @@ int main(int argc, char* argv[])
                 if(ciy[d] == 1) {
                     fiprop[i][0][d] = fi[i][0][index_map[d]];
                 }
-                if(ir > -1 && ir < Nx && jr > -1 && jr < Ny && ciy[d] != 1) {
+                if(ir == -1)
+                    ir = Nx - 1;
+                if(ir == Nx)
+                    ir = 0;
+                if(ciy[d] != 1) {
                     fiprop[i][0][d] = fi[ir][jr][d];
                 }
             }
@@ -193,40 +197,38 @@ int main(int argc, char* argv[])
                 if(ciy[d] == -1) {
                     fiprop[i][Ny-1][d] = fi[i][Ny-1][index_map[d]] - 2*wi[index_map[d]]*rho[i][Ny-1]*3.0*(u_lid*cix[index_map[d]]);
                 }
-                if(ir > -1 && ir < Nx && jr > -1 && jr < Ny && ciy[d] != -1) {
+                if(ir == -1)
+                    ir = Nx - 1;
+                if(ir == Nx)
+                    ir = 0;
+                if(ciy[d] != -1) {
                     fiprop[i][Ny-1][d] = fi[ir][jr][d];
                 }
             }
 
         /*Streaming west side*/
-        for(int j = 0; j < Ny; ++j)
+        for(int j = 1; j < Ny - 1; ++j)
             for(int d = 0; d < Nd; ++d) {
                 int ir, jr;
                 ir = - cix[d];
                 jr = j - ciy[d];
-                if(cix[d] == 1) {
-                    fiprop[0][j][d] = fi[0][j][index_map[d]];
-                }
-                if(ir > -1 && ir < Nx && jr > -1 && jr < Ny && cix[d] != 1) {
-                    fiprop[0][j][d] = fi[ir][jr][d];
-                }
+                if(ir == -1)
+                    ir = Nx - 1;
+                fiprop[0][j][d] = fi[ir][jr][d];
             }
 
         /*Streaming east side*/
-        for(int j = 0; j < Ny; ++j)
+        for(int j = 1; j < Ny - 1; ++j)
             for(int d = 0; d < Nd; ++d) {
                 int ir, jr;
                 ir = Nx - 1 - cix[d];
                 jr = j - ciy[d];
-                if(cix[d] == -1) {
-                    fiprop[Nx-1][j][d] = fi[Nx-1][j][index_map[d]];
-                }
-                if(ir > -1 && ir < Nx && jr > -1 && jr < Ny && cix[d] != -1) {
-                    fiprop[Nx-1][j][d] = fi[ir][jr][d];
-                }
+                if(ir == Nx)
+                    ir = 0;
+                fiprop[Nx-1][j][d] = fi[ir][jr][d];
             }
 
-        /*Calculate max velocity and vorticity*/
+        /*Calculate max and min velocity, speed and vorticity*/
         double dummy_vel = 0.0;
         double dummy_vort = 0.0;
         for(int i = 0; i < Nx; ++i)
@@ -244,12 +246,12 @@ int main(int argc, char* argv[])
                 if(Ux[i][j] < min_v_x)
                     min_v_x = Ux[i][j];
 
-                if(dummy_vel > max_velocity)
-                    max_velocity = dummy_vel;
+                if(dummy_vel > max_speed)
+                    max_speed = dummy_vel;
                 if(dummy_vort > max_vorticity)
                     max_vorticity = dummy_vort;
             }
-        max_velocity  = sqrt(max_velocity);
+        max_speed  = sqrt(max_speed);
         max_vorticity = sqrt(max_vorticity);
 
         /*Write time dependent data*/
@@ -259,7 +261,7 @@ int main(int argc, char* argv[])
             fprintf(params, "%i\n", Nx);
             fprintf(params, "%i\n", Ny);
             fprintf(params, "%i\n", timestep);
-            fprintf(params,"%f\n", max_velocity * 1.15);
+            fprintf(params,"%f\n", max_speed * 1.15);
             fprintf(params,"%f\n", max_vorticity * 1.15);
             fprintf(params,"%f\n", min_v_y);
             fprintf(params,"%f\n", max_v_y);
