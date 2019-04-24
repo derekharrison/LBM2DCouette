@@ -175,7 +175,7 @@ int main(int argc, char* argv[])
             for(int d = 0; d < Nd; ++d) {
                 int ir, jr;
                 ir = i - cix[d];
-                jr = - ciy[d];
+                jr = 0 - ciy[d];
                 if(ciy[d] == 1) {
                     fiprop[i][0][d] = fi[i][0][index_map[d]];
                 }
@@ -210,7 +210,7 @@ int main(int argc, char* argv[])
         for(int j = 1; j < Ny - 1; ++j)
             for(int d = 0; d < Nd; ++d) {
                 int ir, jr;
-                ir = - cix[d];
+                ir = 0 - cix[d];
                 jr = j - ciy[d];
                 if(ir == -1)
                     ir = Nx - 1;
