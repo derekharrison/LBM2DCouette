@@ -56,8 +56,6 @@ int main(int argc, char* argv[])
     double*       wi = allocate_1D_array_doubles(Nx);
     double*      cix = allocate_1D_array_doubles(Nx);
     double*      ciy = allocate_1D_array_doubles(Nx);
-    bool** solid_flags = allocate_2D_array_bool(Nx, Ny);
-    int** adj_flags = allocate_2D_array_int(Nx, Ny);
 
     /*Initialization*/
     /*Initialize index map*/
@@ -93,8 +91,6 @@ int main(int argc, char* argv[])
             X[i][j] = i*dx + 0.5*dx;
             Y[i][j] = j*dx + 0.5*dx;
             rho[i][j] = 1000.0;
-            solid_flags[i][j] = false;
-            adj_flags[i][j] = 0;
         }
 
     /*Initializing discrete velocity distributions*/
@@ -136,9 +132,7 @@ int main(int argc, char* argv[])
         /*Calculate vorticity*/
         for(int i = 1; i < Nx - 1; ++i)
             for(int j = 1; j < Ny - 1; ++j) {
-                if(solid_flags[i][j] == 0) {
-                    vort_field[i][j] = 0.5 * (Uy[i+1][j] - Uy[i-1][j] - Ux[i][j+1] + Ux[i][j-1]) * 1.0 / dx;
-                }
+                vort_field[i][j] = 0.5 * (Uy[i+1][j] - Uy[i-1][j] - Ux[i][j+1] + Ux[i][j-1]) * 1.0 / dx;
             }
 
         /*Calculate equilibrium distribution*/
