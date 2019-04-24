@@ -255,21 +255,6 @@ int main(int argc, char* argv[])
         max_vorticity = sqrt(max_vorticity);
 
         /*Write time dependent data*/
-        FILE* params = NULL;
-        params = fopen("parameters.txt", "w");
-        if(params != NULL) {
-            fprintf(params, "%i\n", Nx);
-            fprintf(params, "%i\n", Ny);
-            fprintf(params, "%i\n", timestep);
-            fprintf(params,"%f\n", max_speed * 1.15);
-            fprintf(params,"%f\n", max_vorticity * 1.15);
-            fprintf(params,"%f\n", min_v_y);
-            fprintf(params,"%f\n", max_v_y);
-            fprintf(params,"%f\n", min_v_x);
-            fprintf(params,"%f\n", max_v_x);
-        }
-        fclose(params);
-
         FILE* data = NULL;
         char file_name_complete[50];
         char* file_name_suffix = (char*) ".txt";
@@ -296,7 +281,22 @@ int main(int argc, char* argv[])
     } while(timestep < max_timesteps);
     /*End LBM algorithm*/
 
-    /*Processing results*/
+    /*Write time independent data*/
+    FILE* params = NULL;
+    params = fopen("parameters.txt", "w");
+    if(params != NULL) {
+        fprintf(params, "%i\n", Nx);
+        fprintf(params, "%i\n", Ny);
+        fprintf(params, "%i\n", timestep);
+        fprintf(params,"%f\n", max_speed * 1.15);
+        fprintf(params,"%f\n", max_vorticity * 1.15);
+        fprintf(params,"%f\n", min_v_y);
+        fprintf(params,"%f\n", max_v_y);
+        fprintf(params,"%f\n", min_v_x);
+        fprintf(params,"%f\n", max_v_x);
+    }
+    fclose(params);
+
     std::cout << "done" << std::endl;
 
     return 0;
