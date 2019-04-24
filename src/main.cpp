@@ -5,9 +5,7 @@
  *      Author: d-w-h
  *
  *      Implementation of the LBM.
- *      A simulation of the interaction of a fluid
- *      and a solid cylindrical object moving with
- *      a specified velocity.
+ *      Simulation of Couette flow.
  */
 
 #include <iostream>
